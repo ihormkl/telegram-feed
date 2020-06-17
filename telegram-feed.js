@@ -29,7 +29,7 @@ var gatherAndSortMessages = function() {
     console.log("gatherAndSortMessages " + channels[mi]);
     messages = messages.concat($.map(data[channels[mi]], function(msgBox) {
       return {
-        datetime : $(msgBox).find("time").attr("datetime"),
+        datetime : $(msgBox).find(".tgme_widget_message_info time").attr("datetime"),
         post : $(msgBox).find("[data-post]").attr("data-post"),
         data : msgBox
       };
