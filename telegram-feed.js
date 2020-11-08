@@ -30,10 +30,10 @@ var gatherAndSortMessages = function() {
   for(mi = 0; mi < channels.length; mi++) {
     console.log("gatherAndSortMessages " + channels[mi]);
     messages = messages.concat($.map(data[channels[mi]], function(msgBox) {
+      var vd = document.implementation.createHTMLDocument('virtual');
       return {
-        datetime : $(msgBox).find(".tgme_widget_message_info time").attr("datetime"),
-        post : $(msgBox).find("[data-post]").attr("data-post"),
-        data : msgBox
+        datetime : $(msgBox, vd).find(".tgme_widget_message_info time").attr("datetime"),
+        post : $(msgBox, vd).find("[data-post]").attr("data-post")
       };
     }));
   }
@@ -66,10 +66,11 @@ var getMessages = function(channels, callback) {
       crossDomain: true
     })
     .done(function (response) {
+      var vd = document.implementation.createHTMLDocument('virtual');
       var channelDone = this;
       console.log("done " + channelDone);
-      data[channelDone] = $(response).find("[data-post]").parent();
-      latest[channelDone] = $(response).find("[data-post]").attr("data-post");
+      data[channelDone] = $(response, vd).find("[data-post]").parent();
+      latest[channelDone] = $(response, vd).find("[data-post]").attr("data-post");
       latest[channelDone] = latest[channelDone].substr(latest[channelDone].lastIndexOf("/") + 1);
       doneCount++;
     }.bind(channel))
