@@ -14,10 +14,6 @@ var loadLimit = 7;
 // TODO: new messages check
 // TODO: add fail check when happens error response from some channel
 
-function resizeIframe(obj) {
-  obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
-}
-
 var latest = {};
 var data = {};
 var messages = [];
@@ -125,18 +121,42 @@ var placeMessages = function(fromCallback) {
   // (another option is to place the message itself, from the 'messages' map 'data' field)
   var li = 0;
   for(li = loaded; li < loaded + loadLimit; li++) {
-    var postHTML = '<iframe id="telegram-post-' + messages[li].post.replace(/[^a-z0-9_]/ig, '-') + '"'
-    + ' src="/tg-proxy.php?post=' + messages[li].post + '"'
-    + ' width="100%" height frameborder="0" scrolling="no" onload="resizeIframe(this)" style="border: none; overflow: hidden; min-width: 320px;" />';
-    postHTML += '<iframe src="https://www.facebook.com/plugins/share_button.php?href='
-                + encodeURIComponent('https://t.me/'+messages[li].post)
-                + '&layout=button&size=small&width=96&height=20" width="96" height="20" style="border:none;overflow:hidden;width:102px;float:right;margin-bottom:8px" scrolling="no" frameborder="0" allowTransparency="true" allow="encrypted-media"></iframe>';
-    $(".lds-ellipsis").before(postHTML);
+    var postFrame = $('<iframe id="telegram-post-' + messages[li].post.replace(/[^a-z0-9_]/ig, '-') + '"'
+      + ' src="/tg-proxy.php?post=' + messages[li].post + '"'
+      + ' width="100%" height frameborder="0" scrolling="no" style="border: none; overflow: hidden; min-width: 320px" />');
+    postFrame.on("load", function(e) {
+      showMessageBox(e.target);
+      $(".lds-ellipsis").dequeue('messages');
+    });
+    var fbFrame = '<iframe src="https://www.facebook.com/plugins/share_button.php?href='
+            + encodeURIComponent('https://t.me/'+messages[li].post)
+            + '&layout=button&size=small&width=96&height=20" width="96" height="20" style="border:none;overflow:hidden;width:102px;float:right;margin-bottom:8px" scrolling="no" frameborder="0" allowTransparency="true" allow="encrypted-media"></iframe>';
+    var msgBox = $('<div id="message-box-' + messages[li].post + '" style="display:none;width:100%;overflow:hidden"></div>');
+    msgBox.append(postFrame, fbFrame);
+    enqueueMessageBox(msgBox);
   }
   loaded = li;
-  $(".lds-ellipsis").remove();
-  // unlock button
-  loading = false;
+
+  $(".lds-ellipsis").dequeue('messages');
+}
+
+function enqueueMessageBox(messageBox) {
+  $(".lds-ellipsis").queue('messages', function() {
+    $(".lds-ellipsis").before(messageBox);
+  });
+}
+
+var messagesShown = 0;
+function showMessageBox(msgIframe) {
+  $(msgIframe).parent().show();
+  msgIframe.style.height = msgIframe.contentWindow.document.documentElement.scrollHeight + 'px';
+  messagesShown += 1;
+  if(messagesShown == loaded) {
+    $(".lds-ellipsis").remove();
+    // unlock button
+    loading = false;
+    $(".more a").show();
+  }
 }
 
 // -----------------------------------------------------------------------------
@@ -156,8 +176,8 @@ window.onload = function() {
     var $moreBtn = $(".more a");
     $moreBtn.off();
     $moreBtn.click(function() {
+      $moreBtn.hide();
       placeMessages();
-      $moreBtn.blur();
       return false;
     });
     $moreBtn.click();
