@@ -11,9 +11,6 @@ var loadLimit = 7;
 // -----------------------------------------------------------------------------
 // functions
 
-// small crutch to make WP with Elementor to load the script
-var $ = (typeof $ === 'undefined') ? window.jQuery : $;
-
 // TODO: new messages check
 // TODO: add fail check when happens error response from some channel
 
