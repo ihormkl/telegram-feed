@@ -111,12 +111,6 @@ var placeMessages = function(fromCallback) {
     return;
   }
 
-  // TODO scroll to js-feed "bottom" before loader icon or minus its height
-  // the '*loaded/loaded' math trick below - to prevent scrolling on the page load
-  $([document.documentElement, document.body]).animate({
-      scrollTop: ($('.lds-ellipsis').offset().top - 40)*loaded/loaded
-  }, 1000);
-
   // place messages using the telegram embed script
   // (another option is to place the message itself, from the 'messages' map 'data' field)
   var li = 0;
