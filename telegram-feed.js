@@ -7,6 +7,7 @@ var channels = ['durov', 'EnglishByNinaKarami', 'EspressoEnglish', 'SpaceX',
 // the amount of messages loaded on the beginning and on the user request
 var loadLimit = 7;
 
+
 // -----------------------------------------------------------------------------
 // functions
 
@@ -15,6 +16,10 @@ var $ = (typeof $ === 'undefined') ? window.jQuery : $;
 
 // TODO: new messages check
 // TODO: add fail check when happens error response from some channel
+
+function resizeIframe(obj) {
+  obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
+}
 
 var latest = {};
 var data = {};
@@ -49,10 +54,10 @@ var getMessages = function(channels, callback) {
   for(i = 0; i < channels.length; i++) {
     var channel = channels[i];
     console.log("getting " + channel);
-    // TODO: improvement - in case of WordPress we can use the WP telegram join
+    // in case of WordPress we can use the WP telegram join
     // plugin with ajax widget - it provides its own (proxy) url for getting
     // telegram embed feed
-    var url = "https://cors-anywhere.herokuapp.com/https://telegram.me/s/" + channel;
+    var url = "/tg-proxy.php?channel=" + channel;
     if (latest[channel]) {
       url += "?before=" + latest[channel]
     }
@@ -120,8 +125,10 @@ var placeMessages = function(fromCallback) {
   // (another option is to place the message itself, from the 'messages' map 'data' field)
   var li = 0;
   for(li = loaded; li < loaded + loadLimit; li++) {
-    $(".lds-ellipsis").before('<script async src="https://telegram.org/js/telegram-widget.js?9" data-telegram-post="'
-     + messages[li].post + '" data-width="100%"></' + 'script>'); // split with + so this code can be pasted in the WP editor
+    var postHTML = '<iframe id="telegram-post-' + messages[li].post.replace(/[^a-z0-9_]/ig, '-') + '"'
+    + ' src="/tg-proxy.php?post=' + messages[li].post + '"'
+    + ' width="100%" height frameborder="0" scrolling="no" onload="resizeIframe(this)" style="border: none; overflow: hidden; min-width: 320px;" />';
+    $(".lds-ellipsis").before(postHTML);
   }
   loaded = li;
   $(".lds-ellipsis").remove();
