@@ -31,9 +31,11 @@ var gatherAndSortMessages = function() {
     console.log("gatherAndSortMessages " + channels[mi]);
     messages = messages.concat($.map(data[channels[mi]], function(msgBox) {
       var vd = document.implementation.createHTMLDocument('virtual');
+      var post = $(msgBox, vd).find("a.tgme_widget_message_date").attr("href");
+      post = post.substring(post.lastIndexOf(channels[mi]));
       return {
         datetime : $(msgBox, vd).find(".tgme_widget_message_info time").attr("datetime"),
-        post : $(msgBox, vd).find("[data-post]").attr("data-post")
+        post : post
       };
     }));
   }
