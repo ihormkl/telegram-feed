@@ -112,8 +112,8 @@ var placeMessages = function(fromCallback) {
     return;
   }
 
-  // TODO scroll to js-feedl "bottom" before loader icon or minus its height
-  // the '*loaded/loaded' math trick belowe - to prevent scrolling on the page load
+  // TODO scroll to js-feed "bottom" before loader icon or minus its height
+  // the '*loaded/loaded' math trick below - to prevent scrolling on the page load
   $([document.documentElement, document.body]).animate({
       scrollTop: ($('.lds-ellipsis').offset().top - 40)*loaded/loaded
   }, 1000);
