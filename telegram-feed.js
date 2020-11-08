@@ -144,8 +144,7 @@ var messagesShown = 0;
 function showMessageBox(msgIframe) {
   $(msgIframe).parent().show();
   msgIframe.style.height = msgIframe.contentWindow.document.documentElement.scrollHeight + 'px';
-  messagesShown += 1;
-  if(messagesShown == loaded) {
+  if(++messagesShown == loaded) {
     $(".lds-ellipsis").remove();
     // unlock button
     loading = false;
