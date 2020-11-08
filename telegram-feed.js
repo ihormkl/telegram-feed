@@ -125,6 +125,9 @@ var placeMessages = function(fromCallback) {
     var postHTML = '<iframe id="telegram-post-' + messages[li].post.replace(/[^a-z0-9_]/ig, '-') + '"'
     + ' src="/tg-proxy.php?post=' + messages[li].post + '"'
     + ' width="100%" height frameborder="0" scrolling="no" onload="resizeIframe(this)" style="border: none; overflow: hidden; min-width: 320px;" />';
+    postHTML += '<iframe src="https://www.facebook.com/plugins/share_button.php?href='
+                + encodeURIComponent('https://t.me/'+messages[li].post)
+                + '&layout=button&size=small&width=96&height=20" width="96" height="20" style="border:none;overflow:hidden;width:102px;float:right;margin-bottom:8px" scrolling="no" frameborder="0" allowTransparency="true" allow="encrypted-media"></iframe>';
     $(".lds-ellipsis").before(postHTML);
   }
   loaded = li;
